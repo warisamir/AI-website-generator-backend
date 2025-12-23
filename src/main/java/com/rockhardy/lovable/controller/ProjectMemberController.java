@@ -29,14 +29,23 @@ public class ProjectMemberController {
             @RequestBody InviteMemberRequest request
             ){
         Long userId =1L;
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectMemberService.inviteMember(projectId,request,userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectMemberService.inviteMember(projectId,request,userId));
     }
     @PatchMapping("/{memberId}")
     public ResponseEntity<MemberResponse> updateMemberRole(
             @PathVariable Long projectId,
             @PathVariable Long memberId,
             @RequestBody InviteMemberRequest request
-    ){
-        Long userId=1L;
-     return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId,memberId,userId,request));
+    ) {
+        Long userId = 1L;
+        return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId, memberId, userId, request));
+    }
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<MemberResponse> deleteMember(
+            @PathVariable Long projectId,
+            @PathVariable Long memberId
+    ) {
+        Long userId = 1L;
+        return ResponseEntity.ok(projectMemberService.deleteMember(projectId, memberId, userId));
+    }
 }
