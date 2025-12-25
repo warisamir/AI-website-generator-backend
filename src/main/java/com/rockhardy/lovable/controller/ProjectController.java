@@ -25,9 +25,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getUserProjects(userId));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectSummaryResponse> getProjectById(@PathVariable Long id){
+    public ProjectResponse getProjectById(@PathVariable Long id){
         Long userId =1L;
-        return ResponseEntity.ok(projectService.getProjectById(id,userId));
+        return (projectService.getProjectById(id,userId));
     }
     @PostMapping
     public ResponseEntity<ProjectResponse>createProject(@RequestBody ProjectRequest projectRequest){
