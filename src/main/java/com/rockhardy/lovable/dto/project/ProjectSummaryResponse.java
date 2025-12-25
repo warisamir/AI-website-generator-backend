@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public record ProjectSummaryResponse(
         Long projectId,
-        String name,
+        String projectName  ,
         Instant createdAt,
         Instant updatedAt
 ) {
