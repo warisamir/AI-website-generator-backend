@@ -8,7 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, ProjectMemberId> {
-    @Query("""
-            """)
     List<ProjectMember> findByProjectId(Long projectId);
 }

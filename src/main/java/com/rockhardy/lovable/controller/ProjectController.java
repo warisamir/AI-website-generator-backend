@@ -4,8 +4,10 @@ import com.rockhardy.lovable.dto.project.ProjectRequest;
 import com.rockhardy.lovable.dto.project.ProjectResponse;
 import com.rockhardy.lovable.dto.project.ProjectSummaryResponse;
 import com.rockhardy.lovable.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class ProjectController {
         return (projectService.getProjectById(id,userId));
     }
     @PostMapping
-    public ResponseEntity<ProjectResponse>createProject(@RequestBody ProjectRequest projectRequest){
+    public ResponseEntity<ProjectResponse>createProject(@RequestBody @Valid ProjectRequest projectRequest){
         Long userId=1L;
         return ResponseEntity.
                 status(HttpStatus.CREATED).
@@ -38,7 +40,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProjectResponse>updateProject(@PathVariable Long id,@RequestBody ProjectRequest request){
+    public ResponseEntity<ProjectResponse>updateProject(@PathVariable Long id,@RequestBody @Valid  ProjectRequest request){
         Long userId =1L;
         return ResponseEntity.ok(projectService.updateProject(id,request,userId));
     }

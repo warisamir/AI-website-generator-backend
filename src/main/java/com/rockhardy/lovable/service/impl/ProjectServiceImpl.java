@@ -5,6 +5,8 @@ import com.rockhardy.lovable.dto.project.ProjectResponse;
 import com.rockhardy.lovable.dto.project.ProjectSummaryResponse;
 import com.rockhardy.lovable.entity.Project;
 import com.rockhardy.lovable.entity.User;
+import com.rockhardy.lovable.exception.IllegalStateException;
+import com.rockhardy.lovable.exception.ResourceNotFoundException;
 import com.rockhardy.lovable.mapper.ProjectMapper;
 import com.rockhardy.lovable.repository.ProjectRepository;
 import com.rockhardy.lovable.repository.UserRepository;
@@ -72,12 +74,15 @@ public class ProjectServiceImpl  implements ProjectService {
     public void softDelete(Long id, Long userId) {
         Project project=getAccessibleProjectById(id,userId);
         if(!project.getOwner().getId().equals(userId)){
-            throw  new RuntimeException("you are not allow to delete");
+            throw new IllegalStateException("you are not Allowed");
         }
         project.setDeletedAt(Instant.now());
         projectRepository.save(project);
     }
     public Project getAccessibleProjectById(Long projectId,  Long userId){
-        return projectRepository.findAccessibleProjectById(projectId,userId).orElseThrow();
+        return projectRepository.findAccessibleProjectById(projectId,userId)
+                .orElseThrow(()->{
+                    throw new ResourceNotFoundException("Resource not Found");
+                });
     }
 }
