@@ -1,5 +1,5 @@
 package com.rockhardy.lovable.Enum;
 
 public enum ProjectRole {
-    EDITOR, VIEWER
+    EDITOR, VIEWER, OWNER
 }
