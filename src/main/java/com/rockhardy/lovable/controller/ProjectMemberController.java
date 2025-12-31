@@ -3,7 +3,6 @@ package com.rockhardy.lovable.controller;
 import com.rockhardy.lovable.dto.member.InviteMemberRequest;
 import com.rockhardy.lovable.dto.member.MemberResponse;
 import com.rockhardy.lovable.dto.member.UpdateMemberRoleRequest;
-import com.rockhardy.lovable.entity.ProjectMember;
 import com.rockhardy.lovable.service.ProjectMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +20,14 @@ public class ProjectMemberController {
 
     @GetMapping
     public ResponseEntity<List<MemberResponse>> getProjectMembers(@PathVariable Long projectId){
-        Long userId=1L;
-        return ResponseEntity.ok(projectMemberService.getProjectMembers(userId,projectId));
+        return ResponseEntity.ok(projectMemberService.getProjectMembers(projectId));
     }
     @PostMapping
     public ResponseEntity<MemberResponse> inviteMember(
             @PathVariable Long projectId,
             @RequestBody @Valid InviteMemberRequest request
             ){
-        Long userId =1L;
-        return ResponseEntity.status(HttpStatus.CREATED).body(projectMemberService.inviteMember(projectId,request,userId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectMemberService.inviteMember(projectId,request));
     }
     @PatchMapping("/{memberId}")
     public ResponseEntity<MemberResponse> updateMemberRole(
@@ -38,16 +35,14 @@ public class ProjectMemberController {
             @PathVariable Long memberId,
             @RequestBody @Valid UpdateMemberRoleRequest request
     ) {
-        Long userId = 1L;
-        return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId, memberId, userId, request));
+        return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId, memberId, request));
     }
     @DeleteMapping("/{memberId}")
     public ResponseEntity<Void> deleteMember(
             @PathVariable Long projectId,
             @PathVariable Long memberId
     ) {
-        Long userId = 1L;
-        projectMemberService.removeMember(projectId, memberId, userId);
+        projectMemberService.removeMember(projectId, memberId);
         return ResponseEntity.noContent().build();
     }
 }
