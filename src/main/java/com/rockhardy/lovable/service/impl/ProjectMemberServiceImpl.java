@@ -12,6 +12,7 @@ import com.rockhardy.lovable.mapper.ProjectMemberMapper;
 import com.rockhardy.lovable.repository.ProjectMemberRepository;
 import com.rockhardy.lovable.repository.ProjectRepository;
 import com.rockhardy.lovable.repository.UserRepository;
+import com.rockhardy.lovable.security.AuthUtils;
 import com.rockhardy.lovable.service.ProjectMemberService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -36,27 +37,26 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     ProjectMemberRepository projectMemberRepository;
     ProjectRepository projectRepository;
     ProjectMemberMapper projectMemberMapper;
-
+    AuthUtils authUtils;
     @Override
-    public List<MemberResponse> getProjectMembers(Long projectId, Long userId) {
+    public List<MemberResponse> getProjectMembers(Long projectId) {
+        Long userId= authUtils.getCurrentUserId();
         Project project = getAccessibleProjectById(projectId, userId);
-        List<MemberResponse> memberResponseList = new ArrayList<>();
-        memberResponseList.add(projectMemberMapper.toMemberResponse(project.getOwner()));
-        memberResponseList.addAll(
-        projectMemberRepository.findByProjectId(projectId)
+        return projectMemberRepository.findByProjectId(projectId)
                 .stream()
                 .map(projectMemberMapper::toProjectMemberResponseFromMember)
-                .toList());
-        return memberResponseList;
+                .toList();
     }
 
     @Override
-    public MemberResponse inviteMember(Long projectId, InviteMemberRequest request, Long userId) {
+    public MemberResponse inviteMember(Long projectId, InviteMemberRequest request) {
+        Long userId= authUtils.getCurrentUserId();
         Project project= getAccessibleProjectById(projectId,userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not Allowed");
-        }
-        User invitee=userRepository.findByEmail(request.email()).orElseThrow();
+        User invitee=userRepository.findByUsername(request.username()).orElseThrow(
+                ()->{
+                    throw new ResourceNotFoundException("Member not found");
+                }
+        );
         if(invitee.getId().equals(userId)){
             throw new RuntimeException("Cannot invite yourself");
         }
@@ -76,11 +76,9 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
-    public MemberResponse updateMemberRole(Long projectId, Long memberId, Long userId, UpdateMemberRoleRequest request) {
+    public MemberResponse updateMemberRole(Long projectId, Long memberId, UpdateMemberRoleRequest request) {
+        Long userId=  authUtils.getCurrentUserId();
         Project project= getAccessibleProjectById(projectId,userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not Allowed");
-        }
         ProjectMemberId projectMemberId= new ProjectMemberId(projectId,memberId);
         ProjectMember projectMember=projectMemberRepository.findById(projectMemberId)
                 .orElseThrow(()-> new ResourceNotFoundException("member not found"));
@@ -90,11 +88,9 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
-    public void removeMember(Long projectId, Long memberId, Long userId) {
+    public void removeMember(Long projectId, Long memberId) {
+        Long userId= authUtils.getCurrentUserId();
         Project project= getAccessibleProjectById(projectId,userId);
-        if(!project.getOwner().getId().equals(userId)){
-            throw new RuntimeException("Not Allowed");
-        }
         ProjectMemberId projectMemberId= new ProjectMemberId(projectId,memberId);
         if(!projectMemberRepository.existsById(projectMemberId)){
             throw new ResourceNotFoundException("you are not in this project");

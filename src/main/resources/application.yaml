@@ -15,7 +15,5 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+jwt:
+  secret-key: as9b7aodlbjfkluosfd789ujeklfnlsduf90b8ha908w74tuqijvlckajdl
