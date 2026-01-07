@@ -4,6 +4,7 @@ import com.rockhardy.lovable.dto.subscription.CheckoutResponse;
 import com.rockhardy.lovable.dto.subscription.PlanResponse;
 import com.rockhardy.lovable.dto.subscription.PortalResponse;
 import com.rockhardy.lovable.dto.subscription.SubscriptionResponse;
+import com.rockhardy.lovable.service.PaymentGatwayService;
 import com.rockhardy.lovable.service.PlanService;
 import com.rockhardy.lovable.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class BillingController {
     private final PlanService planService;
     private final SubscriptionService subscriptionService;
-
+    private final PaymentGatwayService paymentGatwayService;
     @GetMapping("/api/plans")
     public ResponseEntity<PlanResponse> getAllPlans(){
         return ResponseEntity.ok(planService.getAllActivePlans());
@@ -24,17 +25,15 @@ public class BillingController {
 
     @GetMapping("/api/me/subscription")
     public ResponseEntity<SubscriptionResponse> getMySubscription(){
-        Long userId=1L;
-         return ResponseEntity.ok(subscriptionService.getMySubscription(userId));
+         return ResponseEntity.ok(paymentGatwayService.getMySubscription());
     }
-    @PostMapping("/api/stripe/checkout")
+    @PostMapping("/api/payment/checkout")
     public ResponseEntity<CheckoutResponse> createCheckoutResponse(
             @RequestBody CheckoutResponse request
             ){
-        Long userId=1L;
-        return ResponseEntity.ok(subscriptionService.createCheckout(request,userId));
+        return ResponseEntity.ok(paymentGatwayService.createCheckout(request));
     }
-    @PostMapping("/api/stripe/portal")
+    @PostMapping("/api/payment/portal")
     public ResponseEntity<PortalResponse>openCustomerPortal(){
         Long userId=1L;
         return ResponseEntity.ok(subscriptionService.openCustomerPortal(userId));
