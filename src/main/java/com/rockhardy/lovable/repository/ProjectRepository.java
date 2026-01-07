@@ -29,8 +29,8 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
             and p.deletedAt is null
             and exists(
             select 1 from ProjectMember pm
-            where pm.id.userId =: userId
-            and pm.id.projectId=:projectId  
+            where pm.id.userId =:userId
+            and pm.id.projectId=:projectId
             )
             """)
     Optional<Project> findAccessibleProjectById(@Param("projectId") Long projectId, @Param("userId")Long userId);
