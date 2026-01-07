@@ -22,7 +22,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     @Override
-    public CheckoutResponse createCheckout(CheckoutResponse request, Long userId) {
+    public CheckoutResponse createCheckout(CheckoutResponse request) {
+
         return null;
     }
 }
