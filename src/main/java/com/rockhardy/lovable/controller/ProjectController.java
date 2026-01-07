@@ -11,6 +11,7 @@ import lombok.Value;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,28 +27,28 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getUserProjects());
     }
     @GetMapping("/{id}")
+    @PreAuthorize("@security.canViewProject(#projectId)")
     public ProjectResponse getProjectById(@PathVariable Long id){
         Long userId =1L;
         return (projectService.getProjectById(id));
     }
     @PostMapping
     public ResponseEntity<ProjectResponse>createProject(@RequestBody @Valid ProjectRequest projectRequest){
-        Long userId=1L;
         return ResponseEntity.
                 status(HttpStatus.CREATED).
                 body(projectService.createProject(projectRequest));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProjectResponse>updateProject(@PathVariable Long id,@RequestBody @Valid  ProjectRequest request){
-        Long userId =1L;
-        return ResponseEntity.ok(projectService.updateProject(id,request));
+    @PreAuthorize("@security.canEditProject(#projectId)")
+    public ResponseEntity<ProjectResponse>updateProject(@PathVariable Long projectId,@RequestBody @Valid  ProjectRequest request){
+        return ResponseEntity.ok(projectService.updateProject(projectId,request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void>deleteProject(@PathVariable Long id){
-        Long userId=1L;
-        projectService.softDelete(id);
+    @PreAuthorize("@security.canDeleteProject(#projectId")
+    public ResponseEntity<Void>deleteProject(@PathVariable Long projectId){
+        projectService.softDelete(projectId);
         return ResponseEntity.noContent().build();
     }
 }

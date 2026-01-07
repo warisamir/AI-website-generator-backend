@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,10 +20,12 @@ public class ProjectMemberController {
     private final ProjectMemberService projectMemberService;
 
     @GetMapping
+    @PreAuthorize("@security.canViewMembers(#projectId)")
     public ResponseEntity<List<MemberResponse>> getProjectMembers(@PathVariable Long projectId){
         return ResponseEntity.ok(projectMemberService.getProjectMembers(projectId));
     }
     @PostMapping
+    @PreAuthorize("@security.canEditMembers(#projectId)")
     public ResponseEntity<MemberResponse> inviteMember(
             @PathVariable Long projectId,
             @RequestBody @Valid InviteMemberRequest request
@@ -30,6 +33,7 @@ public class ProjectMemberController {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectMemberService.inviteMember(projectId,request));
     }
     @PatchMapping("/{memberId}")
+    @PreAuthorize("@security.canEditMembers(#projectId)")
     public ResponseEntity<MemberResponse> updateMemberRole(
             @PathVariable Long projectId,
             @PathVariable Long memberId,
@@ -38,6 +42,7 @@ public class ProjectMemberController {
         return ResponseEntity.ok(projectMemberService.updateMemberRole(projectId, memberId, request));
     }
     @DeleteMapping("/{memberId}")
+    @PreAuthorize("@security.canManageMembers(#projectId)")
     public ResponseEntity<Void> deleteMember(
             @PathVariable Long projectId,
             @PathVariable Long memberId
