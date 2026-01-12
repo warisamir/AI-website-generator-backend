@@ -2,11 +2,15 @@ package com.rockhardy.lovable.advice;
 
 import com.rockhardy.lovable.exception.BadRequestException;
 import com.rockhardy.lovable.exception.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Collections;
 
 
 @Slf4j
@@ -49,6 +53,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", ex);
     }
 
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiError> handleJwtException(JwtException ex){
+        ApiError apiError=new ApiError(HttpStatus.UNAUTHORIZED,"Invalid JWT Token:", Collections.singletonList(ex.getMessage()));
+        log.error(apiError.toString(),ex);
+        return ResponseEntity.status(apiError.getStatus()).body(apiError);
+    }
     private ResponseEntity<ApiResponse<?>> build(HttpStatus status, String message, Exception ex) {
         ApiError apiError = ApiError.builder()
                 .status(status)

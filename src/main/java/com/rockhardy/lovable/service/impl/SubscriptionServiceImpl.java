@@ -12,18 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
-    public PortalResponse openCustomerPortal(Long userId) {
-        return null;
-    }
-
-    @Override
-    public SubscriptionResponse getMySubscription(Long userId) {
-        return null;
-    }
-
-    @Override
-    public CheckoutResponse createCheckout(CheckoutResponse request) {
-
+    public SubscriptionResponse getCurrentSubscription() {
         return null;
     }
 }
