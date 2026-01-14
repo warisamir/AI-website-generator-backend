@@ -15,16 +15,12 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.time.Instant;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -91,17 +87,42 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
     }
 
     private void handleInvoicePaymentFailed(Invoice invoice) {
+        String subId= extractSubscriptionId(invoice);
+        if(subId==null) return ;
+        subscriptionService.markSubscriptionDue(subId);
+
     }
 
     private void handleInvoicePaid(Invoice invoice) {
+        String subId= extractSubscriptionId(invoice);
+        if(subId==null) return ;
+        try{
+            Subscription subscription=Subscription.retrieve(subId);// sdk calling the stripe server
+            var item= subscription.getItems().getData().get(0);
+            Instant periodStart=toInstant(item.getCurrentPeriodStart());
+            Instant periodEnd=toInstant(item.getCurrentPeriodEnd());
+            subscriptionService.renewSubscription(subId,periodStart,periodEnd);
+        }catch (StripeException e){
+            throw new RuntimeException();
+        }
     }
 
     private void handleCustomerSubscriptionDeleted(Subscription subscription) {
+        if (subscription == null) {
+            log.error("Subscription object was null inside handleCustomerSubscriptionDeleted");
+            return;
+        }
+        SubscriptionStatus status = mapStripeStatusToEnum(subscription.getStatus());
+        if (status == null) {
+            log.warn("UNknown status {} for subscription {} ", subscription
+                    .getStatus(),subscription.getId());
+        }
+        subscriptionService.cancelSubscription(subscription.getId());
     }
-
-    private void handeCheckoutSessionCompleted(Session session,Map<String, String> metadata) {
+    private void handeCheckoutSessionCompleted(Session session,Map<String,
+            String> metadata) {
         if(session==null){
-            log.error("Session object was null");
+            log.error("Session object was null inside handeCheckoutSessionCompleted");
         }
         Long userId= Long.parseLong(metadata.get("user_id"));
         Long planId= Long.parseLong(metadata.get("plan_id"));
@@ -117,12 +138,13 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
 
     private void handleCustomerSubscriptionUpdated(Subscription subscription) {
         if(subscription==null){
-            log.error("Subscription object was null");
+            log.error("Subscription object was null inside handleCustomerSubscriptionUpdated");
             return ;
         }
         SubscriptionStatus status=mapStripeStatusToEnum(subscription.getStatus());
         if(status==null){
-            log.warn("UNknown status {} for subscription {} ",subscription.getStatus(),subscription.getId());
+            log.warn("UNknown status {} for subscription {} ",subscription
+                    .getStatus(),subscription.getId());
         }
         SubscriptionItem item=subscription.getItems().getData().get(0);
         Instant periodStart= toInstant(item.getCurrentPeriodStart());
@@ -143,7 +165,7 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
     }
 
     private Instant toInstant(Long currentPeriodStart) {
-        return currentPeriodStart!=null?Instant.ofEpochMilli(currentPeriodStart);
+        return currentPeriodStart!=null?Instant.ofEpochMilli(currentPeriodStart):null;
     }
 
     private User getUser(Long userId){
@@ -163,5 +185,12 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
                 yield null;
             }
         };
+    }
+    private String extractSubscriptionId(Invoice invoice){
+        var parent = invoice.getParent();
+        if(parent==null) return null;
+        var subDetails= parent.getSubscriptionDetails();
+        if (subDetails==null)return null;
+        return subDetails.getSubscription();
     }
 }

@@ -1,5 +1,6 @@
 package com.rockhardy.lovable.controller;
 
+import com.rockhardy.lovable.advice.ApiResponse;
 import com.rockhardy.lovable.dto.subscription.*;
 import com.rockhardy.lovable.service.PaymentGatwayService;
 import com.rockhardy.lovable.service.PlanService;
@@ -57,7 +58,7 @@ public class BillingController {
     }
 
     @PostMapping("/webhooks/payment")
-    public ResponseEntity<String> handlePaymentWebhooks(
+    public ResponseEntity<ApiResponse<String>> handlePaymentWebhooks(
             @RequestBody String payload,
             @RequestHeader("Stripe-Signature") String sigHeader
     ) {
@@ -80,7 +81,7 @@ public class BillingController {
                     }
                 } catch (Exception e) {
                     log.error("Unsafe deserialization failed for event {}: {}", event.getType(), e.getMessage());
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Deserialization failed");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("Deserialization failed"));
                 }
             }
 
