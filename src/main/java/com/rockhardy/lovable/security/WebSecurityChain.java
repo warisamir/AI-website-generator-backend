@@ -29,7 +29,7 @@ public class WebSecurityChain  {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         auth->auth
-                                .requestMatchers("/api/auth/**","/webhooks/**").permitAll()
+                                .requestMatchers("/api/auth/**","/webhooks/**","/actuator/**","/api/v1/query/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

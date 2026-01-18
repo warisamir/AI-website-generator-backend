@@ -6,7 +6,20 @@ spring:
     username: postgres
     password: waris1918
     driver-class-name: org.postgresql.Driver
-
+# 1. Expose the Prometheus endpoint over the web
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  server:
+    port: 8080
   jpa:
     hibernate:
       ddl-auto: update
@@ -16,3 +29,4 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
 
+client-url: http://localhost:8080

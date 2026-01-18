@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+<property name="LOCAL_LOG_PATH" value="lovable/log/" />
+<property name="SERVER_LOG_PATH" value="lovable/log/" />
+
+<springProfile name="default">
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+<encoder>
+<pattern>
+[%p] %d{dd/MM/yyyy HH:mm:ss,Asia/Kolkata} [%t] [%c{1}.%M:%L] hostName=%X{hostName} cloudName=%X{cloudName} %m%n
+</pattern>
+</encoder>
+</appender>
+
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<file>${LOCAL_LOG_PATH}/lovable-service.log</file>
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+<fileNamePattern>${LOCAL_LOG_PATH}/lovable-service.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+<maxHistory>14</maxHistory>
+</rollingPolicy>
+<encoder>
+<pattern>
+[%p] %d{dd/MM/yyyy HH:mm:ss,Asia/Kolkata} [%t] [%c{1}.%M:%L] hostName=%X{hostName} cloudName=%X{cloudName} %m%n
+</pattern>
+</encoder>
+</appender>
+
+<root level="INFO">
+<appender-ref ref="CONSOLE" />
+<appender-ref ref="FILE" />
+</root>
+
+<logger name="org.springframework" level="INFO"/>
+<logger name="org.hibernate" level="INFO"/>
+<logger name="com.parablu" level="INFO"/>
+</springProfile>
+<springProfile name="dev,qa,perf,uat-us-east,prod-us-east,prod-in,prod-eu,prod-me">
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<file>${SERVER_LOG_PATH}/lovable-service.log</file>
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+<fileNamePattern>${SERVER_LOG_PATH}/lovable-service.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+<maxHistory>14</maxHistory>
+</rollingPolicy>
+<encoder>
+<pattern>
+[%p] %d{dd/MM/yyyy HH:mm:ss,Asia/Kolkata} [%t] [%c{1}.%M:%L] hostName=%X{hostName} cloudName=%X{cloudName} %m%n
+</pattern>
+</encoder>
+</appender>
+
+<root level="INFO">
+<appender-ref ref="FILE"/>
+</root>
+
+<logger name="org.springframework" level="INFO"/>
+<logger name="org.hibernate" level="WARN"/>
+<logger name="io.netty" level="WARN"/>
+<logger name="com.parablu" level="INFO"/>
+<logger name="com.azure" level="WARN"/>
+<logger name="okhttp3" level="WARN"/>
+<logger name="org.apache.http" level="WARN"/>
+<logger name="com.zaxxer.hikari" level="WARN"/>
+<logger name="com.zaxxer.hikari.pool" level="WARN"/>
+<logger name="org.quartz" level="INFO"/>
+<logger name="org.quartz.impl.jdbcjobstore" level="WARN"/>
+<logger name="com.microsoft.aad.msal4j" level="WARN"/>
+</springProfile>
+</configuration>

@@ -6,6 +6,7 @@ import com.rockhardy.lovable.dto.subscription.CheckoutResponse;
 import com.rockhardy.lovable.dto.subscription.PortalResponse;
 import com.rockhardy.lovable.entity.Plan;
 import com.rockhardy.lovable.entity.User;
+import com.rockhardy.lovable.exception.BadRequestException;
 import com.rockhardy.lovable.exception.ResourceNotFoundException;
 import com.rockhardy.lovable.repository.PlanRepository;
 import com.rockhardy.lovable.repository.UserRepository;
@@ -35,7 +36,23 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
     @Override
     public PortalResponse openCustomerPortal() {
         Long userId=authUtils.getCurrentUserId();
-        return null;
+        User user= getUser(userId);
+        String stripeCustomerId=user.getStripeCustomerId();
+        if(stripeCustomerId==null|| stripeCustomerId.isEmpty()){
+            throw new BadRequestException("User doesnt have a stripeCustomerId, userId"+userId);
+        }
+        try {
+            var portalSession= com.stripe.model.billingportal.Session.
+                    create(com.stripe.param.billingportal.
+                    SessionCreateParams
+                            .builder()
+                            .setCustomer(stripeCustomerId)
+                            .setReturnUrl(domain)
+                            .build());
+            return new PortalResponse(portalSession.getUrl());
+        } catch (StripeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -143,7 +160,7 @@ public class StripePaymentGatewayImpl implements PaymentGatwayService {
         }
         SubscriptionStatus status=mapStripeStatusToEnum(subscription.getStatus());
         if(status==null){
-            log.warn("UNknown status {} for subscription {} ",subscription
+            log.warn("Unknown status {} for subscription {} ",subscription
                     .getStatus(),subscription.getId());
         }
         SubscriptionItem item=subscription.getItems().getData().get(0);
