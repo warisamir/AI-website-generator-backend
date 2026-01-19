@@ -28,5 +28,3 @@ management:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
-
-client-url: http://localhost:8080

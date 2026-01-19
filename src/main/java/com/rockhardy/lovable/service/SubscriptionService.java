@@ -18,4 +18,6 @@ public interface SubscriptionService {
     void renewSubscription(String subId, Instant periodStart, Instant periodEnd);
 
     void markSubscriptionDue(String subId);
+
+    boolean canCreateProject();
 }

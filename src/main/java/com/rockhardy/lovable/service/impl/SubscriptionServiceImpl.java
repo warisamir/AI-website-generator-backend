@@ -11,6 +11,7 @@ import com.rockhardy.lovable.entity.User;
 import com.rockhardy.lovable.exception.ResourceNotFoundException;
 import com.rockhardy.lovable.mapper.SubscriptionMapper;
 import com.rockhardy.lovable.repository.PlanRepository;
+import com.rockhardy.lovable.repository.ProjectMemberRepository;
 import com.rockhardy.lovable.repository.SubscriptionRepository;
 import com.rockhardy.lovable.repository.UserRepository;
 import com.rockhardy.lovable.security.AuthUtils;
@@ -36,6 +37,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     SubscriptionMapper subscriptionMapper;
     UserRepository userRepository;
     PlanRepository planRepository;
+    ProjectMemberRepository projectMemberRepository;
+    Integer FREE_TIER_PORJECTS_ALLOWED=1;
     @Override
     public SubscriptionResponse getCurrentSubscription() {
         Long userId = authUtils.getCurrentUserId();
@@ -122,6 +125,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscription.setStatus(SubscriptionStatus.PAST_DUE);
         subscriptionRepository.save(subscription);
     }
+
+    @Override
+    public boolean canCreateProject() {
+        Long userId =authUtils.getCurrentUserId();
+        SubscriptionResponse currentSubscription=getCurrentSubscription();
+        int countOfOnedProject= projectMemberRepository.countProjectOwnedByUser(userId);
+
+        if(currentSubscription.plan()==null){
+            return countOfOnedProject<FREE_TIER_PORJECTS_ALLOWED;
+        }
+
+        return countOfOnedProject <currentSubscription.plan().maxProjects();
+    }
+
     private User getUser(Long userId){
         User user=userRepository.findById(userId).orElseThrow(()->
                 new ResourceNotFoundException("user not found with this ID"+userId));
