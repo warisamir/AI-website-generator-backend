@@ -1,0 +1,40 @@
+[INFO] 20/01/2026 01:19:24 [restartedMain] [c.r.l.LovableApplication.logStarting:54] hostName= cloudName= Starting LovableApplication using Java 23-valhalla with PID 20732 (C:\Users\Asus\Downloads\Javadevelop\lovable\target\classes started by Asus in C:\Users\Asus\Downloads\Javadevelop\lovable)
+[INFO] 20/01/2026 01:19:24 [restartedMain] [c.r.l.LovableApplication.logStartupProfileInfo:652] hostName= cloudName= No active profile set, falling back to 1 default profile: "default"
+[INFO] 20/01/2026 01:19:24 [restartedMain] [o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log:69] hostName= cloudName= Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+[INFO] 20/01/2026 01:19:24 [restartedMain] [o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor.log:69] hostName= cloudName= For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+[INFO] 20/01/2026 01:19:25 [background-preinit] [o.h.v.i.u.Version.<clinit>:18] hostName= cloudName= HV000001: Hibernate Validator 9.0.1.Final
+[INFO] 20/01/2026 01:19:26 [restartedMain] [o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn:145] hostName= cloudName= Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+[INFO] 20/01/2026 01:19:26 [restartedMain] [o.s.d.r.c.RepositoryConfigurationDelegate.registerRepositoriesIn:213] hostName= cloudName= Finished Spring Data repository scanning in 231 ms. Found 5 JPA repository interfaces.
+[INFO] 20/01/2026 01:19:29 [restartedMain] [o.s.b.t.TomcatWebServer.initialize:114] hostName= cloudName= Tomcat initialized with port 8080 (http)
+[INFO] 20/01/2026 01:19:29 [restartedMain] [o.a.c.h.Http11NioProtocol.log:168] hostName= cloudName= Initializing ProtocolHandler ["http-nio-8080"]
+[INFO] 20/01/2026 01:19:29 [restartedMain] [o.a.c.c.StandardService.log:168] hostName= cloudName= Starting service [Tomcat]
+[INFO] 20/01/2026 01:19:29 [restartedMain] [o.a.c.c.StandardEngine.log:168] hostName= cloudName= Starting Servlet engine: [Apache Tomcat/11.0.15]
+[INFO] 20/01/2026 01:19:29 [restartedMain] [o.s.b.w.c.s.WebApplicationContextInitializer.prepareWebApplicationContext:77] hostName= cloudName= Root WebApplicationContext: initialization completed in 5005 ms
+[INFO] 20/01/2026 01:19:30 [restartedMain] [c.z.h.HikariDataSource.getConnection:109] hostName= cloudName= HikariPool-1 - Starting...
+[INFO] 20/01/2026 01:19:31 [restartedMain] [c.z.h.p.HikariPool.checkFailFast:580] hostName= cloudName= HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7542036b
+[INFO] 20/01/2026 01:19:31 [restartedMain] [c.z.h.HikariDataSource.getConnection:122] hostName= cloudName= HikariPool-1 - Start completed.
+[INFO] 20/01/2026 01:19:31 [restartedMain] [o.h.o.jpa.logPersistenceUnitInformation:102] hostName= cloudName= HHH008540: Processing PersistenceUnitInfo [name: default]
+[INFO] 20/01/2026 01:19:31 [restartedMain] [o.h.o.core.logVersion:41] hostName= cloudName= HHH000001: Hibernate ORM core version 7.2.0.Final
+[INFO] 20/01/2026 01:19:33 [restartedMain] [o.s.o.j.p.SpringPersistenceUnitInfo.addTransformer:128] hostName= cloudName= No LoadTimeWeaver setup: ignoring JPA class transformer
+[INFO] 20/01/2026 01:19:33 [restartedMain] [o.h.o.c.pooling.logConnectionInfo:179] hostName= cloudName= HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/lovable]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 17.5
+	Default catalog/schema: lovable/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+[WARN] 20/01/2026 01:19:34 [restartedMain] [o.h.o.core.checkCompositeIdentifier:334] hostName= cloudName= HHH000038: Composite id class does not override equals(): com.rockhardy.lovable.entity.ProjectMemberId
+[INFO] 20/01/2026 01:19:35 [restartedMain] [o.h.o.core.initiateService:53] hostName= cloudName= HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+[INFO] 20/01/2026 01:19:36 [restartedMain] [o.s.o.j.LocalContainerEntityManagerFactoryBean.buildNativeEntityManagerFactory:444] hostName= cloudName= Initialized JPA EntityManagerFactory for persistence unit 'default'
+[INFO] 20/01/2026 01:19:36 [restartedMain] [o.s.d.j.r.q.QueryEnhancerFactories.<clinit>:48] hostName= cloudName= Hibernate is in classpath; If applicable, HQL parser will be used.
+[WARN] 20/01/2026 01:19:37 [restartedMain] [o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration.openEntityManagerInViewInterceptor:247] hostName= cloudName= spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+[INFO] 20/01/2026 01:19:37 [restartedMain] [o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer.configure:110] hostName= cloudName= Global AuthenticationManager configured with UserDetailsService bean with name userServiceImpl
+[INFO] 20/01/2026 01:19:42 [restartedMain] [o.s.b.a.e.w.EndpointLinksResolver.<init>:60] hostName= cloudName= Exposing 3 endpoints beneath base path '/actuator'
+[INFO] 20/01/2026 01:19:42 [restartedMain] [o.a.c.h.Http11NioProtocol.log:168] hostName= cloudName= Starting ProtocolHandler ["http-nio-8080"]
+[INFO] 20/01/2026 01:19:42 [restartedMain] [o.s.b.t.TomcatWebServer.start:240] hostName= cloudName= Tomcat started on port 8080 (http) with context path '/'
+[INFO] 20/01/2026 01:19:42 [restartedMain] [c.r.l.LovableApplication.logStarted:60] hostName= cloudName= Started LovableApplication in 18.362 seconds (process running for 19.529)
