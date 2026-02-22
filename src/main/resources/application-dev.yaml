@@ -28,15 +28,13 @@ management:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+jwt:
+  secret-key: as9b7aodlbjfkluosfd789ujeklfnlsduf90b8ha908w74tuqijvlckajdl
+stripe:
+  api:
+    secret: sk_test_51SmnIvSFMybZXBrzpJsosWyT8vcQVn9UcB1NGyYPOGJZKZNHmqdFTbpdS7PLTGWhqO4cMXXRwm0Lz62hdqxjF8yG00qjh9IQwX
+  webhook:
+    secret: whsec_c3b65da3933fbd2e571ff2bed8623228584c3084a4973c94984d4407a56c2c14
+client-url: http://localhost:5173
 
-  ai:
-    openai:
-      api-key:
-        base-url: https://openrouter-ai/api
-        chat:
-          options:
-            model: openai/gpt-5.2-codex
-            temperature: 0.0
-
-client-url: http://localhost:8080
 
