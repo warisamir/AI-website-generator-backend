@@ -2,7 +2,7 @@ package com.rockhardy.lovable.controller;
 
 import com.rockhardy.lovable.dto.file.FileContentResponse;
 import com.rockhardy.lovable.dto.file.FileNode;
-import com.rockhardy.lovable.service.FileService;
+import com.rockhardy.lovable.service.ProjectFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +16,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/project/{projectId}/files")
 public class FileController {
-    private final FileService fileService;
+    private final ProjectFileService projectFileService;
 
     @GetMapping
     public ResponseEntity<List<FileNode>>getFileTree(@PathVariable Long projectId){
         Long userId=1L;
-        return ResponseEntity.ok(fileService.getfileTree(projectId,userId));
+        return ResponseEntity.ok(projectFileService.getfileTree(projectId,userId));
     }
     @GetMapping("/{*path}")
     public ResponseEntity<FileContentResponse>getFileContent(@PathVariable String path){
         Long userId=1L;
-        return ResponseEntity.ok(fileService.getFileContent(userId,path));
+        return ResponseEntity.ok(projectFileService.getFileContent(userId,path));
     }
 }
