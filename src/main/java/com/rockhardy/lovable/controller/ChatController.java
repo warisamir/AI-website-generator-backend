@@ -16,13 +16,13 @@ import reactor.core.publisher.Flux;
 import java.awt.*;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 public class ChatController {
     AiGenerationService aiGenerationService;
 
-    @PostMapping(value = "/api/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> streamChat(
             @RequestBody ChatRequest request) {
         return aiGenerationService.streamResponse(request.message(),request.projectId())

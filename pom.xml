@@ -31,6 +31,7 @@
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<spring-ai.version>2.0.0-M1</spring-ai.version>
+		<spring-boot-admin.version>4.0.0</spring-boot-admin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -113,7 +114,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
