@@ -30,12 +30,12 @@ public class AiGenerationServiceImpl implements AiGenerationService {
     Pattern FILE_TAG_PATTERN=Pattern.compile("<file path=\"([^\"]+)\">(.*?)</file>",Pattern.DOTALL);
     @Override
     @PreAuthorize("@security.canEditProject(#projectId)")
-    public Flux<String> streamResponse(String userMessage, Long projectId){
+    public Flux<String>streamResponse(String userMessage, Long projectId){
         Long userId=authUtils.getCurrentUserId();
         createChatSessionIfNotExists(projectId,userId);
-        StringBuilder fullResponseBuffer= new StringBuilder();
         Map<String, Object>advisorParams=Map.of("userId",userId,"projectId",projectId);
-        return  chatClient.prompt().
+        StringBuilder fullResponseBuffer= new StringBuilder();
+         return  chatClient.prompt().
                 system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(userMessage)
                 .advisors(advisorSpec -> {
@@ -53,7 +53,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
                     });
                 })
                 .doOnError(error->{
-                    log.error("Error During Streaming for project");
+                    log.error("Error During Streaming for projectid: {}",projectId);
                 })
                 .map(response-> Objects.requireNonNull(response.getResult().getOutput().getText()));
     }

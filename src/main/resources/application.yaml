@@ -32,7 +32,6 @@ management:
         enabled: true
 
 
-client-url: http://localhost:8080  # Matches new client port
 
 logging:
   level:
