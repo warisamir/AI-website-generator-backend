@@ -8,6 +8,7 @@ import com.rockhardy.lovable.entity.Project;
 import com.rockhardy.lovable.entity.ProjectMember;
 import com.rockhardy.lovable.entity.ProjectMemberId;
 import com.rockhardy.lovable.entity.User;
+import com.rockhardy.lovable.exception.BadRequestException;
 import com.rockhardy.lovable.exception.IllegalStateException;
 import com.rockhardy.lovable.exception.ResourceNotFoundException;
 import com.rockhardy.lovable.mapper.ProjectMapper;
@@ -16,6 +17,7 @@ import com.rockhardy.lovable.repository.ProjectRepository;
 import com.rockhardy.lovable.repository.UserRepository;
 import com.rockhardy.lovable.security.AuthUtils;
 import com.rockhardy.lovable.service.ProjectService;
+import com.rockhardy.lovable.service.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,23 +44,13 @@ public class ProjectServiceImpl  implements ProjectService {
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
     AuthUtils authUtils;
-    @Override
-    public List<ProjectSummaryResponse> getUserProjects() {
-        Long userId= authUtils.getCurrentUserId();
-        var projects= projectRepository.findAllAccessibleByUser(userId);
-        return projectMapper.toListOfProjectSummaryResponse(projects) ;
-    }
-
-    @Override
-    @PreAuthorize("@security.canViewProject(#projectId)")
-    public ProjectResponse getProjectById(Long projectId) {
-        Long userId= authUtils.getCurrentUserId();
-        Project project= getAccessibleProjectById(userId,projectId);
-        return projectMapper.toProjectResponse(project);
-    }
-
+    SubscriptionService subscriptionService;
     @Override
     public ProjectResponse createProject(ProjectRequest projectRequest) {
+        if(!subscriptionService.canCreateProject()){
+            throw new BadRequestException("User cannot create New project with Current Plan " +
+                    "upgradde the plan now.");
+        }
         Long userId= authUtils.getCurrentUserId();
         User owner=userRepository.getReferenceById(userId);
 //                userRepository
@@ -79,6 +71,21 @@ public class ProjectServiceImpl  implements ProjectService {
                 .id(projectMemberId)
                 .build();
         projectMemberRepository.save(projectMember);
+        return projectMapper.toProjectResponse(project);
+    }
+
+    @Override
+    public List<ProjectSummaryResponse> getUserProjects() {
+        Long userId= authUtils.getCurrentUserId();
+        var projects= projectRepository.findAllAccessibleByUser(userId);
+        return projectMapper.toListOfProjectSummaryResponse(projects) ;
+    }
+
+    @Override
+    @PreAuthorize("@security.canViewProject(#projectId)")
+    public ProjectResponse getProjectById(Long projectId) {
+        Long userId= authUtils.getCurrentUserId();
+        Project project= getAccessibleProjectById(userId,projectId);
         return projectMapper.toProjectResponse(project);
     }
 
