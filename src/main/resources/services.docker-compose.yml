@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
-      - "9000:5432"
+      - "9010:5432"
     volumes:
       - pgvector-data:/var/lib/postgresql
     restart: unless-stopped
@@ -17,13 +17,13 @@ services:
   minio:
     image: quay.io/minio/minio:latest
     container_name: minio
-    command: server /data --console-address ":9011"
+    command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
     ports:
-      - "9010:9000"
-      - "9011:9001"
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio-data:/data
     restart: unless-stopped

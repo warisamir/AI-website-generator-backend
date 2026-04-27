@@ -5,9 +5,11 @@ spring:
   application:
     name: lovable
   datasource:
-    url: jdbc:postgresql://localhost:5432/lovable
-    username: postgres
-    password: waris1918
+    url: jdbc:postgresql://localhost:9010/pgvector-test?options=-c%20TimeZone=UTC
+    username: user
+#    postgres
+    password: password
+#    waris1918
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,6 +19,15 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+      jdbc:
+        time_zone: UTC
+  ai:
+    openai:
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: qwen/qwen3-8b
+          temperature: 0.0
 
 management:
   endpoints:
@@ -30,7 +41,6 @@ management:
     export:
       prometheus:
         enabled: true
-
 
 
 logging:
