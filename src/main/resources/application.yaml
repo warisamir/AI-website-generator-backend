@@ -1,25 +1,16 @@
+server:
+  port: 8080  # CHANGE: Client on 8080, Admin on 8081
+
 spring:
   application:
     name: lovable
   datasource:
-    url: jdbc:postgresql://localhost:5432/lovable
-    username: postgres
-    password: waris1918
+    url: jdbc:postgresql://localhost:9010/pgvector-test?options=-c%20TimeZone=UTC
+    username: user
+#    postgres
+    password: password
+#    waris1918
     driver-class-name: org.postgresql.Driver
-# 1. Expose the Prometheus endpoint over the web
-management:
-  endpoints:
-    web:
-      exposure:
-        include: prometheus,health,info
-    health:
-      show-details: always
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-  server:
-    port: 8080
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,3 +19,40 @@ management:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
+      jdbc:
+        connection:
+          timezone: Asia/Kolkata
+  ai:
+    openai:
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: qwen/qwen3-8b
+          temperature: 0.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,*  # Include all + your specifics
+    endpoint:
+      health:
+        show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+
+ # Matches new client port
+
+logging:
+  level:
+    org.springframework.ai.chat.client: DEBUG
+    de.codecentric.boot.admin.client: DEBUG  # ADD: Client registration logs
+
+minio:
+  url: http://localhost:9000          # or minio:9000 if inside docker network
+  access-key: minioadmin
+  secret-key: minioadmin123
+  project-bucket: projects

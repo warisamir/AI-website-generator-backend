@@ -1,6 +1,7 @@
 package com.rockhardy.lovable.entity;
 
 import com.rockhardy.lovable.Enum.MessageRole;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +13,24 @@ import java.time.Instant;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatMessage {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumns({
+            @JoinColumn(name = "project_id",referencedColumnName = "project_id",nullable = false),
+            @JoinColumn(name = "user_id",referencedColumnName = "user_id",nullable = false)
+    })
     ChatSession chatSession;
+
+    @Column(columnDefinition = "text", nullable = false)
     String content;
     String toolCalls;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     MessageRole role;
+
     Instant tokenUsed;
     Instant createdAt;
     Instant updatedAt;
