@@ -1,6 +1,7 @@
 package com.rockhardy.lovable.service.impl;
 
 import com.rockhardy.lovable.llm.PromptUtils;
+import com.rockhardy.lovable.llm.advisors.FileTreeContextAdvisor;
 import com.rockhardy.lovable.security.AuthUtils;
 import com.rockhardy.lovable.service.AiGenerationService;
 import com.rockhardy.lovable.service.ProjectFileService;
@@ -27,6 +28,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
     ChatClient chatClient;
     AuthUtils authUtils;
     ProjectFileService projectFileService;
+    FileTreeContextAdvisor fileTreeContextAdvisor;
     Pattern FILE_TAG_PATTERN=Pattern.compile("<file path=\"([^\"]+)\">(.*?)</file>",Pattern.DOTALL);
     @Override
     @PreAuthorize("@security.canEditProject(#projectId)")
@@ -39,6 +41,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
                 system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(userMessage)
                 .advisors(advisorSpec -> {
+                    advisorSpec.advisors(fileTreeContextAdvisor);
                     advisorSpec.params(advisorParams);
                 })
                 .stream()
