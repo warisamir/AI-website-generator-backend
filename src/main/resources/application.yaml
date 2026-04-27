@@ -20,7 +20,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
       format_sql: true
       jdbc:
-        time_zone: UTC
+        connection:
+          timezone: Asia/Kolkata
   ai:
     openai:
       base-url: https://openrouter.ai/api
@@ -42,6 +43,8 @@ management:
       prometheus:
         enabled: true
 
+
+ # Matches new client port
 
 logging:
   level:

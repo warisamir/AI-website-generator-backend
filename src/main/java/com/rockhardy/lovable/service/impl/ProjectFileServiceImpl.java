@@ -38,7 +38,7 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     @Value("${minio.project-bucket}")
     private String projectBucket;
     @Override
-    public List<FileNode> getfileTree(Long projectId, Long userId) {
+    public List<FileNode> getfileTree(Long projectId,Long userId) {
         List<ProjectFile>fileList=projectFileRepository.findByProjectId(projectId);
         return projectFileMapper.toListOfFileNode(fileList);
     }
