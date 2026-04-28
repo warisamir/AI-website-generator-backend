@@ -44,7 +44,7 @@ management:
         enabled: true
 
 
- # Matches new client port
+
 
 logging:
   level:
