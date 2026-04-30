@@ -16,6 +16,7 @@ import com.rockhardy.lovable.repository.ProjectRepository;
 import com.rockhardy.lovable.repository.UserRepository;
 import com.rockhardy.lovable.security.AuthUtils;
 import com.rockhardy.lovable.service.ProjectService;
+import com.rockhardy.lovable.service.ProjectTemplateService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,6 +42,7 @@ public class ProjectServiceImpl  implements ProjectService {
     UserRepository userRepository;
     ProjectMapper projectMapper;
     ProjectMemberRepository projectMemberRepository;
+    ProjectTemplateService projectTemplateService;
     AuthUtils authUtils;
     @Override
     public List<ProjectSummaryResponse> getUserProjects() {
@@ -79,6 +81,7 @@ public class ProjectServiceImpl  implements ProjectService {
                 .id(projectMemberId)
                 .build();
         projectMemberRepository.save(projectMember);
+        projectTemplateService.initializeProjectFromTemaplate(project.getId());
         return projectMapper.toProjectResponse(project);
     }
 

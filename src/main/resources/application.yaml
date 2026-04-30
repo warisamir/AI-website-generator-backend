@@ -27,7 +27,7 @@ spring:
       base-url: https://openrouter.ai/api
       chat:
         options:
-          model: qwen/qwen3-8b
+          model: gpt-5.2
           temperature: 0.0
 
 management:
@@ -42,8 +42,6 @@ management:
     export:
       prometheus:
         enabled: true
-
-
 
 
 logging:

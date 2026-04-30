@@ -2,6 +2,7 @@ package com.rockhardy.lovable.service.impl;
 
 import com.rockhardy.lovable.llm.PromptUtils;
 import com.rockhardy.lovable.llm.advisors.FileTreeContextAdvisor;
+import com.rockhardy.lovable.llm.tools.CodeGenerationTools;
 import com.rockhardy.lovable.security.AuthUtils;
 import com.rockhardy.lovable.service.AiGenerationService;
 import com.rockhardy.lovable.service.ProjectFileService;
@@ -37,9 +38,11 @@ public class AiGenerationServiceImpl implements AiGenerationService {
         createChatSessionIfNotExists(projectId,userId);
         Map<String, Object>advisorParams=Map.of("userId",userId,"projectId",projectId);
         StringBuilder fullResponseBuffer= new StringBuilder();
+        CodeGenerationTools codeGenerationTools= new CodeGenerationTools(projectFileService,projectId);
          return  chatClient.prompt().
                 system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(userMessage)
+                 .tools(codeGenerationTools)
                 .advisors(advisorSpec -> {
                     advisorSpec.advisors(fileTreeContextAdvisor);
                     advisorSpec.params(advisorParams);
@@ -58,7 +61,17 @@ public class AiGenerationServiceImpl implements AiGenerationService {
                 .doOnError(error->{
                     log.error("Error During Streaming for projectid: {}",projectId);
                 })
-                .map(response-> Objects.requireNonNull(response.getResult().getOutput().getText()));
+//                .map(response-> Objects.requireNonNull(response.getResult().getOutput().getText()));
+                 .handle((resp, sink) -> {
+                     var result = resp != null ? resp.getResult() : null;
+                     var output = result != null ? result.getOutput() : null;
+                     var text   = output != null ? output.getText() : null;
+
+                     if (text != null && !text.isEmpty()) {
+                         sink.next(text);
+                     }
+                     // else: ignore non-text events
+                 });
     }
 
 
@@ -67,7 +80,7 @@ public class AiGenerationServiceImpl implements AiGenerationService {
 
 
     public void parseAndSaveFile(String fullResponse,Long projectId){
-        Matcher matcher=FILE_TAG_PATTERN.matcher(fullResponse);
+            Matcher matcher=FILE_TAG_PATTERN.matcher(fullResponse);
         while (matcher.find()){
             String filepath=matcher.group(1);
             String fileContent=matcher.group(2).trim();

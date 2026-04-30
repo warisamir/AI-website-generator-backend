@@ -25,37 +25,50 @@ import java.util.Map;
 public class FileTreeContextAdvisor implements StreamAdvisor {
 
     private final ProjectFileService projectFileService;
+
     @Override
-    public Flux<ChatClientResponse> adviseStream(ChatClientRequest chatClientRequest, StreamAdvisorChain streamAdvisorChain) {
-        Map<String,Object> context=chatClientRequest.context();
-        Long userId= Long.parseLong(context.getOrDefault("userId",0).toString());
-        Long projectId=Long.parseLong(context.getOrDefault("projectId",0 ).toString());
-        ChatClientRequest argumentedRequestWithFileTree = argumentRequestWithFileTree(chatClientRequest,projectId,userId);
-        return streamAdvisorChain.nextStream(argumentedRequestWithFileTree);
+    public Flux<ChatClientResponse> adviseStream(ChatClientRequest request, StreamAdvisorChain streamAdvisorChain) {
+        Map<String, Object> context = request.context();
+        Long projectId = Long.parseLong(context.getOrDefault("projectId", 0).toString());
+
+        ChatClientRequest augmentedChatClientRequest = augmentRequestWithFileTree(request, projectId);
+
+        return streamAdvisorChain.nextStream(augmentedChatClientRequest);
     }
 
-    private ChatClientRequest argumentRequestWithFileTree(ChatClientRequest request,Long projectId,Long userId){
-        List<Message> incomingMessages=request.prompt().getInstructions();
-        Message systemMessages=incomingMessages.stream()
-                .filter(m->m.getMessageType()== MessageType.SYSTEM)
-                .findFirst().orElse(null);
-        List<Message> userMessage=incomingMessages.stream().filter(
-                m->m.getMessageType()!=MessageType.SYSTEM)
+    private ChatClientRequest augmentRequestWithFileTree(ChatClientRequest request, Long projectId) {
+
+        List<Message> incomingMessages = request.prompt().getInstructions();
+
+        Message systemMessage = incomingMessages.stream()
+                .filter(m -> m.getMessageType() == MessageType.SYSTEM)
+                .findFirst()
+                .orElse(null);
+
+        List<Message> userMessages = incomingMessages.stream()
+                .filter(m -> m.getMessageType() != MessageType.SYSTEM)
                 .toList();
-        List<Message>allMessages= new ArrayList<>();
-        if(systemMessages!=null){
-            allMessages.add(systemMessages);
+
+        List<Message> allMessages = new ArrayList<>();
+
+        // Add original system message
+        if (systemMessage != null) {
+            allMessages.add(systemMessage);
         }
 
-        List<FileNode>fileTree = projectFileService.getfileTree(projectId,userId);
-        String fileTreeContext= "\n\n  --------FILE TREE -------- \n\n"+fileTree.toString();
+        List<FileNode> fileTree = projectFileService.getfileTree(projectId);
+        String fileTreeContext = "\n\n ---- FILE_TREE ----\n"+fileTree.toString();
         allMessages.add(new SystemMessage(fileTreeContext));
-        allMessages.addAll(userMessage);
+
+        allMessages.addAll(userMessages);
+
         return request
                 .mutate()
-                .prompt(new Prompt(allMessages,request.prompt().getOptions()))
+                .prompt(new Prompt(allMessages, request.prompt().getOptions()))
                 .build();
     }
+
+
     @Override
     public String getName() {
         return "FileTreeContextAdvisor";

@@ -78,7 +78,7 @@ public class ProjectTemplateServiceImpl implements ProjectTemplateService {
             projectFileRepository.saveAll(filesToSave);
         }
         catch (Exception ex){
-            throw new RuntimeException("Failed to initialize the project from template ",e);
+            throw new RuntimeException("Failed to initialize the project from template ",ex);
         }
     }
 }

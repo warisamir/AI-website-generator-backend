@@ -21,8 +21,7 @@ public class FileController {
     private final AuthUtils authUtils;
     @GetMapping
     public ResponseEntity<List<FileNode>>getFileTree(@PathVariable Long projectId){
-        Long userId= authUtils.getCurrentUserId();
-        return ResponseEntity.ok(projectFileService.getfileTree(projectId,userId));
+        return ResponseEntity.ok(projectFileService.getfileTree(projectId));
     }
     @GetMapping("/{*path}")
     public ResponseEntity<FileContentResponse>getFileContent(@PathVariable String path){

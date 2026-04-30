@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ProjectFileService {
 
-     List<FileNode> getfileTree(Long projectId, Long userId);
+     List<FileNode> getfileTree(Long projectId);
 
-    FileContentResponse getFileContent(Long userId, String path);
+    FileContentResponse getFileContent(Long proiectId, String path);
 
     void saveFiile(Long projectId, String filepath, String fileContent);
 }

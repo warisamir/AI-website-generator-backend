@@ -9,6 +9,7 @@ import com.rockhardy.lovable.mapper.ProjectFileMapper;
 import com.rockhardy.lovable.repository.ProjectFileRepository;
 import com.rockhardy.lovable.repository.ProjectRepository;
 import com.rockhardy.lovable.service.ProjectFileService;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
@@ -37,15 +38,29 @@ public class ProjectFileServiceImpl implements ProjectFileService {
     private final ProjectFileMapper projectFileMapper;
     @Value("${minio.project-bucket}")
     private String projectBucket;
+
+    private static final String BUCKET_NAME="projects";
     @Override
-    public List<FileNode> getfileTree(Long projectId,Long userId) {
+    public List<FileNode> getfileTree(Long projectId) {
         List<ProjectFile>fileList=projectFileRepository.findByProjectId(projectId);
         return projectFileMapper.toListOfFileNode(fileList);
     }
 
     @Override
-    public FileContentResponse getFileContent(Long userId, String path) {
-        return null;
+    public FileContentResponse getFileContent(Long projectId, String path) {
+        String objectName=projectId+"/"+path;
+        try(
+                InputStream is=minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket(BUCKET_NAME)
+                                .object(objectName)
+                                .build())){
+            String content= new String(is.readAllBytes(),StandardCharsets.UTF_8);
+            return new FileContentResponse(path,content);
+        } catch (Exception e) {
+            log.error("failed to read file {}/{}", projectId, path,e);
+            throw new RuntimeException("failed to read file content",e);
+        }
     }
 
     @Override
@@ -77,7 +92,7 @@ public class ProjectFileServiceImpl implements ProjectFileService {
 
             file.setUpdatedAt(Instant.now());
                     projectFileRepository.save(file);
-                    log.info("failed to save {}",objectKey);
+                    log.info("file save sucessfully {}",objectKey);
         }
         catch (Exception e){
             throw new RuntimeException("file saved failed",e);
