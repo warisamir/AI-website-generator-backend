@@ -2,9 +2,7 @@ package com.rockhardy.lovable.entity;
 
 import com.rockhardy.lovable.Enum.MessageRole;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.time.Instant;
 import java.util.List;
@@ -12,6 +10,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatMessage {
     @Id
